@@ -1,8 +1,17 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useHistory } from "react-router-dom";
+import { axiosWithAuth } from "../utils/axiosWithAuth";
+
+const initialState = {
+  name: "",
+  age: "",
+  email: "",
+};
 
 const AddFriend = () => {
-  const [formValues, setFormValues] = useState("");
+  const [formValues, setFormValues] = useState(initialState);
+
+  const history = useHistory();
 
   const handleChanges = (event) => {
     setFormValues({
@@ -11,8 +20,20 @@ const AddFriend = () => {
     });
   };
 
-  const handleSubmit = () => {
-
+  const handleSubmit = (event) => {
+      event.preventDefault();
+    axiosWithAuth()
+      .post("/friends", formValues)
+      .then((res) => {
+        console.log(res);
+        setFormValues({
+          name: "",
+          age: "",
+          email: "",
+        });
+        history.push("/protected");
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
